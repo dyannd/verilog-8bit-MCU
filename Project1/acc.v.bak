@@ -1,0 +1,60 @@
+//accumulator 
+
+module accumulator(
+	input wire[3:0] A_imm, //input of immediate A
+	input wire[7:0] B_rf, //input from register file RF
+	input wire[7:0] B_alu, //input from ALU
+	input wire LoadAcc, //load signal
+	input wire SelAcc1, //select signal 1
+	input wire SelAcc0, //select signal 0
+	input wire CLK, //clock
+	input wire CLB, //reset low
+	input wire cin,
+	input wire zin,
+	output wire[7:0] acc_out,
+	output wire cout,
+	output wire zout
+);
+//8-bit accumulator register 
+reg [7:0] acc_reg;
+assign acc_out = acc_reg;
+assign cout = coutReg;
+assign zout = zoutReg;
+
+//multiplexer manipulation
+wire[7:0] mux0_out;
+wire[7:0] mux1_out;
+
+reg coutReg;
+reg zoutReg;
+
+//mux 0
+mux2 mux_0 (
+	.A({4'b0, A_imm}), 
+	.B(B_rf), 
+	.select(SelAcc0),
+	.mux_out(mux0_out)
+);
+
+//mux 1
+mux2 mux_1 (
+	.A(mux0_out),
+	.B(B_alu),
+	.select(SelAcc1),
+	.mux_out(mux1_out)
+);
+
+always @(posedge CLK or CLB) begin 
+	if (CLB == 1'b0) begin //reset to 0 if reset signal is low
+		acc_reg <= 8'b0;
+		coutReg <= 1'b0;
+		zoutReg <= 1'b0;
+	end
+	else if (LoadAcc) begin //if loadacc is on, then accumulate the data from mux
+		acc_reg <= mux1_out;
+		coutReg <= cin;
+		zoutReg <= zin;
+	end
+end
+
+endmodule

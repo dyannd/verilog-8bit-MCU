@@ -1,0 +1,22 @@
+runrun ru!run//ALU 
+module ALU 
+(input [7:0] a,
+ input [7:0] b,
+ input [1:0] ALU_sel,
+ input [1:0] load_shift,
+ output [7:0] result,
+ output cout,
+ output zout
+);
+
+//Decare any necessary registers or wires
+
+always @(a or b or ALU_sel or load_shift) begin
+
+//Complete this part to specify ALU behavior 
+
+end
+
+
+endmodule
+

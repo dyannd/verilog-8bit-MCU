@@ -1,0 +1,25 @@
+0	//1 PC = 0, ACC = 0
+4	//2 PC = 1 , ACC = 4 
+4	//3 PC = 2, ACC = 4
+A	//4 PC = 3, ACC = 10
+A	//5 PC = 4, ACC = 10
+2	//6 PC = 5, ACC = 2
+2	//7 PC = 6, ACC = 2
+FE	//8 PC = 7, ACC = -2 <--
+0	//9 PC = 8, ACC = 0
+0	//10 PC = 9, ACC = 0
+9	//11 PC = 10, ACC = 9
+4	//12 PC = 11, ACC = 4
+FA	//PC = 12, ACC = -6   <---
+FA	//PC = 13, ACC = -6   <----
+0	//PC = 14, ACC = 0
+F4	//PC = 15, ACC = -12    <----
+F4	//PC = 16, ACC = -12    <----
+A	//PC = 17, ACC = 10
+E	//PC = 18, ACC = 14
+E	//PC = 19, ACC = 14
+0	//PC = 20, ACC = 0
+0	//PC = 21, ACC = 0
+
+
+

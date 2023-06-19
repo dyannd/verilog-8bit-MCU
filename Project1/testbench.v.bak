@@ -1,0 +1,43 @@
+`timescale 1ns/1ps
+
+module test_cpu
+#(parameter MEMWIDTH = 32)
+();
+
+reg [MEMWIDTH-1:0] IRmem[31:0], Expectedmem[31:0];
+reg clk, rst;
+wire [7:0] inst, pc, acc;
+reg [7:0] expACC ;
+
+assign inst = IRmem[pc];
+assign expACC = Expectedmem[pc];
+
+initial
+begin
+	$readmemh("test_program.txt", IRmem);
+	$readmemh("expected.txt", Expectedmem);
+	clk = 0;
+	rst = 0;
+	#10 rst = 1; 
+end
+
+always begin
+#5 clk = ~clk;
+end
+
+
+
+always @(posedge clk) begin
+	if (expACC !== acc) $error("PC = %h, expected =%h, received = %h\n", pc, expACC, acc);
+	else $display("correct result for PC= %h\n", pc);
+end
+
+processor dut(
+	.CLK (clk),
+	.CLB (rst),
+	.INST (inst),
+	.PC (pc),
+	.ACC (acc)
+);
+
+endmodule

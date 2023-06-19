@@ -1,0 +1,24 @@
+//0.RESET = 1 
+D4	//1.LD ACC IMM(0100) /*ACC = 4*/ ----PC = 0
+51	//2.MOV REG01<-ACC /* R1 = 4 */    --- PC = 1 and will increment at each instruction afterwards 
+DA	//3.LD ACC IMM(1010) /*ACC = 10 */  ---- PC = 2
+52	//4.MOV REG02<-ACC /* R2 = 10 */   ----- PC = 3
+D2	//5.LD ACC IMM(0010) /* ACC = 2 */
+53	//6.MOV REG03<-ACC /* R3 = 2 */  
+21	//7.SUB REG01 ACC /*ACC = ACC - REG01 = 2 - 4 */ 
+82	//8.JC REG02 /*check if PCOUT is 1010*/ ----- PC = 7  
+00	//9. SKIPPED NOP ---- PC = 8 
+64	//10.SKIPPED JZ REG 04 ---- PC = 9    <---------- jump to instruction #15
+D9	//11.LD ACC IMM(1001) /* ACC = 1001*/ -- PC = 10(PC jumped from 7 to 10). jump to instruction #11
+C0	//12.SHR ACC  --- /* ACC = 100 */ PC = 11
+22	//13.SUB REG02 ACC /* ACC = 4 - 10 = -6 */ -> with carry -- PC = 12
+AF	//14.JC IMM(1111)           --> jump to instruction #16 --- PC = 13
+F0	//15.HALT          ---- PC = 14
+B0	//16.SHL ACC          ---- PC = 15
+00      //17.NOP              ---- PC = 16
+DA	//18.LD ACC IMM(1010) /*ACC = 10 */ 
+11      //19. ADD ACC REG01  /*ACC = 10 + 4*/
+54	//20.MOV REG04 <- ACC /* R4 = 14 */  
+D0	//21.LD ACC IMM (0000) /*ACC = 0*/ -- PC = 20      
+78	//22.JZ IMM(1000) /*check if PCOUT is 1000*/ ---- PC = 21  <----------- jump to instruction #9
+

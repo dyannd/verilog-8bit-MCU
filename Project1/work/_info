@@ -1,0 +1,202 @@
+m255
+K4
+z2
+!s11f MIXED_VERSIONS
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/leigh/Documents/CSE664ProjectPart1/Project1
+vaccumulator
+Z0 !s110 1671233480
+!i10b 1
+!s100 G<d]7mKJ@Y`CG_NNb27R61
+IWZKR2kQH1=HWM2c3c[nNi0
+Z1 dC:/Users/Anh D Nguyen/Desktop/ELE664/Project1_1216Update/Project1
+Z2 w1671210008
+8acc.v
+Facc.v
+!i122 48
+L0 3 59
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+Z4 OP;L;2021.3;73
+r1
+!s85 0
+31
+Z5 !s108 1671233479.000000
+!s107 testbench.v|register_file.v|program_counter.v|processor.v|mux2.v|controller.v|acc.v|IR.v|ALU.v|
+Z6 !s90 -reportprogress|300|ALU.v|IR.v|acc.v|controller.v|mux2.v|processor.v|program_counter.v|register_file.v|testbench.v|
+!i113 1
+Z7 tCvgOpt 0
+vALU
+R0
+!i10b 1
+!s100 FI__`KW9hSQJ=WG9>;?ML0
+IhlEA4z6BoRNzgm]:N^>R41
+R1
+R2
+8ALU.v
+FALU.v
+!i122 48
+L0 2 92
+R3
+R4
+r1
+!s85 0
+31
+R5
+Z8 !s107 testbench.v|register_file.v|program_counter.v|processor.v|mux2.v|controller.v|acc.v|IR.v|ALU.v|
+R6
+!i113 1
+R7
+n@a@l@u
+vcontroller
+R0
+!i10b 1
+!s100 a1V<c5X;o;f3K]NP<jV=X1
+IJGDd[1E35:C_06EXJNiT60
+R1
+w1671214553
+8controller.v
+Fcontroller.v
+!i122 48
+L0 2 322
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+vIR
+R0
+!i10b 1
+!s100 cPILL=h>Ni`02XJSaCmgJ0
+IRoL8DV77i]R_Yz8o5zgBH0
+R1
+R2
+8IR.v
+FIR.v
+!i122 48
+L0 2 25
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+n@i@r
+vmux2
+R0
+!i10b 1
+!s100 I_=92_a<>4?MjV60i=1VX1
+I5fR41V5j<:Ak0GnH>PKJY2
+R1
+R2
+8mux2.v
+Fmux2.v
+!i122 48
+L0 3 10
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+vprocessor
+R0
+!i10b 1
+!s100 SPFSZz7?z2oHmcKN;OIn^1
+IN^^PkC]EbakFUU>l:5G?V2
+R1
+w1671211091
+8processor.v
+Fprocessor.v
+!i122 48
+L0 2 117
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+vprogram_counter
+R0
+!i10b 1
+!s100 Fa74L@c1hIj]A?[D7?@Ti3
+Ik4aTTJR]<GV6=oLHIO3^<2
+R1
+R2
+8program_counter.v
+Fprogram_counter.v
+!i122 48
+L0 2 31
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+vreg_file
+R0
+!i10b 1
+!s100 AkoKZ:gaBkoKPW9G5VRoN3
+IUIAe87Ji0T8?;zo39R59z3
+R1
+w1671210009
+8register_file.v
+Fregister_file.v
+!i122 48
+L0 2 27
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+vtest_cpu
+R0
+!i10b 1
+!s100 JAT7zY_NRf2;KVk0]M1>P3
+I6bI7H;^=`J5ojI`Oo_GgK3
+R1
+w1671233471
+8testbench.v
+Ftestbench.v
+!i122 48
+L0 3 41
+R3
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7

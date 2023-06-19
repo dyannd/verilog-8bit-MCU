@@ -1,0 +1,323 @@
+//controller	
+module controller(
+	input wire z1,
+	input wire c1,
+	input wire CLK,
+	input wire CLB,
+	input wire [3:0] Opcode,
+	output reg LoadIR,
+	output reg IncPC, 
+	output reg SelPC,
+	output reg LoadPC,
+	output reg LoadReg,
+	output reg LoadAcc,
+	output reg [1:0] SelAcc,
+	output reg [3:0] SelALU
+);
+
+
+//set parameters
+reg [3:0] current_st, next_st;
+parameter       ADD = 4'd0,
+		SUB = 4'd1,
+		NOR = 4'd2,
+		MOVR = 4'd3,
+		MOVA = 4'd4,
+		JZrs = 4'd5,
+		JZimm = 4'd6,
+		JCrs = 4'd7,
+		JCimm = 4'd8,
+		SHL = 4'd9,
+		SHR = 4'd10,
+		LDimm = 4'd11,
+		NOP = 4'd12,
+		HALT = 4'd13,
+		RESET = 4'd14;
+
+//first cycle, load instruction
+always @(posedge CLK or negedge CLB) begin
+	if (CLB == 1'b0) begin //reset everything
+		current_st <= RESET;
+	end
+	else 
+		current_st <= next_st;
+end
+
+//Assign next state based on Opcode //need to have current state in here
+always @(*) begin 
+if (current_st == RESET)
+begin
+	case (Opcode)
+		4'b0001:begin
+			
+			next_st <= ADD;
+			end
+		
+		4'b0010:begin
+			next_st <= SUB;
+			end
+
+		4'b0011:begin
+			next_st <= NOR;
+			end
+
+		4'b0100:begin
+			next_st <= MOVR;
+			end
+
+		4'b0101:begin
+			next_st <= MOVA;
+			end
+
+		4'b0110:begin
+			next_st <= JZrs;
+			end
+
+		4'b0111:begin
+			next_st <= JZimm;
+			end
+
+		4'b1000:begin
+			next_st <= JCrs;
+			end
+
+		4'b1010:begin
+			next_st <= JCimm;
+			end
+
+		4'b1011:begin
+			next_st <= SHL;
+			end
+
+		4'b1100:begin
+			next_st <= SHR;
+			end
+
+		4'b1101:begin
+			next_st <= LDimm;
+			end
+
+		4'b0000:begin
+			next_st <= NOP;
+			end
+
+		4'b1111:begin
+			next_st <= HALT;
+			end
+		default:begin
+			next_st <= RESET;
+			end
+	endcase
+end
+else next_st <= RESET;
+end
+
+//execution based on current state // need loadIR state and set all other instructions to zero for load ir, incpc should be 0 in load IR state
+always @(*) begin
+	case (current_st)
+		ADD:begin //add Acc and register
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b10; //sel0 = 0, sel = 0 (choose output from ALU)
+			SelALU <= 4'b1000;
+			LoadAcc <= 1'b1;
+		end
+		SUB:begin //sub Acc and register
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b00; //sel0 = 0, sel = 0 (choose output from ALU)
+			SelALU <= 4'b1100;
+			LoadAcc <= 1'b1;
+		end
+		NOR:begin // Acc nor register
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b10; //sel0 = 0, sel = 1
+			SelALU <= 4'b0100;
+			LoadAcc <= 1'b1;
+		end
+		MOVR:begin //move register to acc
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b10; //sel0 = 0, sel = 1
+			SelALU <= 4'b0000;
+			LoadAcc <= 1'b1;
+		end
+		MOVA:begin //move acc to register
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b1; //loadReg is on
+			SelAcc <= 2'b00; //sel0 = 0, sel = 0
+			SelALU <= 4'b0010; //load acc to ALU
+			LoadAcc <= 1'b0; //not write to ACC
+		end
+		JZrs:begin //jump if zero to reg value
+			if(z1) begin //if z-flag is 1, previous output is zero
+				LoadIR <= 1'b0;
+				IncPC <= 1'b0; //don't increase PC
+				SelPC <= 1'b1; //select register to PC
+				LoadPC <= 1'b1;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0010;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+			else begin
+				LoadIR <= 1'b0;
+				IncPC <= 1'b1; // increase PC
+				SelPC <= 1'b0; //select register to PC
+				LoadPC <= 1'b0;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0000;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+		end
+		JZimm:begin //jump if zero to immediate value
+			if(z1) begin //if z-flag is 1, previous output is zero
+				LoadIR <= 1'b0;
+				IncPC <= 1'b0; //don't increase PC
+				SelPC <= 1'b0; //select immediate to PC
+				LoadPC <= 1'b1;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0010;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+			else begin
+				LoadIR <= 1'b0;
+				IncPC <= 1'b1; // increase PC
+				SelPC <= 1'b0; //select register to PC
+				LoadPC <= 1'b0;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0000;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+		end
+		JCrs:begin //jump if carry to reg value
+			if(c1) begin //if c-flag is 1
+				LoadIR <= 1'b0;
+				IncPC <= 1'b0; //don't increase PC
+				SelPC <= 1'b1; //select register to PC
+				LoadPC <= 1'b1;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0010;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+			else begin
+				LoadIR <= 1'b0;
+				IncPC <= 1'b1; //increase PC
+				SelPC <= 1'b0; //select register to PC
+				LoadPC <= 1'b0;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0000;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+		end
+		JCimm:begin //jump if carry to imm value
+			if(c1) begin //if c-flag is 1
+				LoadIR <= 1'b0;
+				IncPC <= 1'b0; //don't increase PC
+				SelPC <= 1'b0; //select immediate to PC
+				LoadPC <= 1'b1;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0010;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+			else begin
+				LoadIR <= 1'b0;
+				IncPC <= 1'b1; // increase PC
+				SelPC <= 1'b0; //select register to PC
+				LoadPC <= 1'b0;
+				LoadReg <= 1'b0;
+				SelAcc <= 2'b00; //sel0 = 0, sel = 0, select signal from ALU to acc
+				SelALU <= 4'b0000;//load acc to ALU
+				LoadAcc <= 1'b0; //don't load the accumulator
+			end
+		end
+		SHL:begin //shift left acc
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b00; //sel0 = 0, sel = 0
+			SelALU <= 4'b0001; //shift left acc value
+			LoadAcc <= 1'b1;
+		end
+		SHR:begin //shift left acc
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b00; //sel0 = 0, sel = 0
+			SelALU <= 4'b0011; //shift right acc value
+			LoadAcc <= 1'b1;
+		end
+		LDimm:begin //load imm to acc
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			SelAcc <= 2'b11; //sel0 = 1, sel = 1
+			LoadAcc <= 1'b1;
+		end		
+		NOP:begin //do nothing but increase PC
+			LoadIR <= 1'b0;
+			IncPC <= 1'b1; //increase PC
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			LoadAcc <= 1'b0;
+		end	
+		HALT:begin //do nothing nothing
+			LoadIR <= 1'b0;
+			IncPC <= 1'b0; 
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0;
+			LoadAcc <= 1'b0;
+		end	
+		RESET:begin //make all 0//change name to LoadIR
+			LoadIR <= 1'b1;//load instruction
+			IncPC <= 1'b0; 
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0; 
+			SelAcc <= 2'b00; 
+			SelALU <= 4'b0000; 
+			LoadAcc <= 1'b0;
+		end
+		default:begin
+			LoadIR <= 1'b1;//load instruction
+			IncPC <= 1'b0; 
+			SelPC <= 1'b0;
+			LoadPC <= 1'b0;
+			LoadReg <= 1'b0; 
+			SelAcc <= 2'b00; 
+			SelALU <= 4'b0000; 
+			LoadAcc <= 1'b0;
+		end
+	endcase
+end
+endmodule
